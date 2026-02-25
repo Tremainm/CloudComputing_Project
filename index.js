@@ -45,7 +45,7 @@ app.get('/api/status', (req, res) => {
 // Lab task: CREATE a new product
 app.post('/products', async (req, res) => {
   try{
-    const newEntry = await Product.create({ body });
+    const newEntry = await Product.create({ name, price, description });
 
     console.log("📥 Data saved to MongoDB:", newEntry);
     res.status(201).json({ message: "Saved successfully!", data: newEntry });
