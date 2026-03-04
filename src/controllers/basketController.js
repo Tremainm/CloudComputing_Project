@@ -29,7 +29,7 @@ exports.addToBasket = async (req, res) => {
         const existingItem = basket.items.find(item => item.productId.toString() === productId);
         if (existingItem) {
             // If it exists, update the quantity
-            existingItem.quantity += quantity;
+            existingItem.quantity += (quantity || 1);
         } else {
             // If it doesn't exist, add a new item
             basket.items.push({ productId, quantity });
