@@ -1,11 +1,12 @@
+// Mounted at '/basket' in server.js.
+
 const express = require('express');
 const router = express.Router();
 const basketController = require('../controllers/basketController');
 
-// Get basket for a user
-router.get('/', basketController.getBasket);
-router.post('/', basketController.addToBasket);
-router.delete('/', basketController.removeFromBasket);
-router.put('/', basketController.updateQuantity);
+router.get('/', basketController.getAllItems);
+router.post('/', basketController.createItem);
+router.put('/:id', basketController.updateItem);
+router.delete('/:id', basketController.deleteItem);
 
 module.exports = router;

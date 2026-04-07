@@ -1,32 +1,26 @@
-require('dotenv').config(); // Load env vars first!
+require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
-const connectDB = require('./config/db'); // Import DB logic
+const connectDB = require('./config/db');
 
-// Import Routes
-const productRoutes = require('./routes/productRoutes');
 const indexRoutes = require('./routes/indexRoutes');
+const pantryRoutes = require('./routes/pantryRoutes');
 const basketRoutes = require('./routes/basketRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Security and Middleware
 app.use(helmet());
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '10mb' })); // 10mb to allow any image payloads if needed later
 
-// Connect to Database
 connectDB();
 
-// Use Routes
-app.use('/', indexRoutes); // Handles /api/status
-// Mount product routes at the '/products' base path
-app.use('/products', productRoutes);
-// Mount basket routes at the '/basket' base path
-app.use('/basket', basketRoutes);
+app.use('/', indexRoutes);  // GET /api/status
+app.use('/pantry', pantryRoutes); // GET|POST /pantry, GET|PUT|DELETE /pantry/:id
+app.use('/basket', basketRoutes); // GET|POST /basket, PUT|DELETE /basket/:id
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port: ${PORT}`);
+  console.log(`🚀 Pantry Manager server running on port: ${PORT}`);
 });
