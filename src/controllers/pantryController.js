@@ -21,7 +21,7 @@ exports.getAllItems = async (req, res) => {
 // GET /pantry/:id
 exports.getItemById = async (req, res) => {
   try {
-    const item = await PantryItem.findOne({ clientId: req.params.id });
+    const item = await PantryItem.findById(req.params.id);
     if (!item) return res.status(404).json({ message: 'Pantry item not found' });
     res.json(item);
   } catch (err) {
@@ -33,9 +33,8 @@ exports.getItemById = async (req, res) => {
 // Body: { name, category, quantity, unit, location, expiryDate? }
 exports.createItem = async (req, res) => {
   try {
-    const { clientId, name, category, quantity, unit, location, expiryDate } = req.body;
+    const { name, category, quantity, unit, location, expiryDate } = req.body;
     const newItem = await PantryItem.create({
-      clientId,
       name,
       category,
       quantity,
@@ -53,8 +52,8 @@ exports.createItem = async (req, res) => {
 // Body: any subset of { name, category, quantity, unit, location, expiryDate }
 exports.updateItem = async (req, res) => {
   try {
-    const updatedItem = await PantryItem.findOneAndUpdate(
-      { clientId: req.params.id },
+    const updatedItem = await PantryItem.findByIdAndUpdate(
+      req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
@@ -68,7 +67,7 @@ exports.updateItem = async (req, res) => {
 // DELETE /pantry/:id
 exports.deleteItem = async (req, res) => {
   try {
-    const deleted = await PantryItem.findOneAndDelete({ clientId: req.params.id });
+    const deleted = await PantryItem.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: 'Pantry item not found' });
     res.json({ message: 'Pantry item deleted', item: deleted });
   } catch (err) {

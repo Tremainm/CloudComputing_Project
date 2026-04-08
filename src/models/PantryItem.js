@@ -3,7 +3,6 @@
 const mongoose = require('mongoose');
 
 const pantryItemSchema = new mongoose.Schema({
-    clientId: { type: String, required: true, unique: true },
     name: { type: String, required: true, trim: true },
     category: { type: String, required: true, trim: true },
     quantity: { type: Number, required: true, min: 0 },
