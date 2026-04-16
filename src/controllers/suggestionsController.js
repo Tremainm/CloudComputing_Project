@@ -31,6 +31,7 @@ ${pantryDescription}`;
     );
 
     const data = await response.json();
+    console.log('[suggestions] Gemini response:', JSON.stringify(data, null, 2));
     const raw = data.candidates[0].content.parts[0].text.trim();
 
     // Strip markdown code fences if Gemini wraps the JSON in them
