@@ -6,6 +6,7 @@ const basketController = require('../controllers/basketController');
 
 router.get('/', basketController.getAllItems);
 router.post('/', basketController.createItem);
+router.post('/save-list', basketController.saveList); 
 router.put('/:id', basketController.updateItem);
 router.delete('/:id', basketController.deleteItem);
 
