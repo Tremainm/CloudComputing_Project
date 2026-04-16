@@ -1,5 +1,7 @@
 // CRUD handlers for basket items.
 
+const { uploadJSON } = require('../utils/s3');
+const User = require('../models/User');
 const BasketItem = require('../models/BasketItem');
 
 // GET /basket
@@ -20,6 +22,41 @@ exports.createItem = async (req, res) => {
     res.status(201).json({ message: 'Basket item added', item: newItem });
   } catch (err) {
     res.status(500).json({ message: 'Error adding basket item', error: err.message });
+  }
+};
+
+// POST /basket/save-list
+// Fetches the user's basket items and saves them as a JSON file in S3.
+exports.saveList = async (req, res) => {
+  try {
+    const items = await BasketItem.find().sort({ name: 1 });
+
+    if (items.length === 0) {
+      return res.status(400).json({ message: 'Your basket is empty.' });
+    }
+
+    // Key format: lists/<userId>/<timestamp>.json
+    // This means each save creates a new file rather than overwriting,
+    // so the user keeps a history of saved lists
+    const key = `lists/${req.user.id}/${Date.now()}.json`;
+
+    const payload = {
+      savedAt: new Date().toISOString(),
+      savedBy: req.user.email,
+      itemCount: items.length,
+      items: items.map(item => ({
+        name: item.name,
+        category: item.category,
+        quantity: item.quantity,
+        unit: item.unit,
+      })),
+    };
+
+    const url = await uploadJSON(key, payload);
+
+    res.json({ message: 'Shopping list saved successfully', url });
+  } catch (err) {
+    res.status(500).json({ message: 'Error saving list to S3', error: err.message });
   }
 };
 
