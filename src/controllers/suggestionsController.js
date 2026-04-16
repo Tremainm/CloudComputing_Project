@@ -1,3 +1,7 @@
+const { GoogleGenAI } = require('@google/genai');
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
 exports.getSuggestions = async (req, res) => {
   try {
     const { items } = req.body;
@@ -19,22 +23,12 @@ exports.getSuggestions = async (req, res) => {
 Pantry inventory:
 ${pantryDescription}`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-      }
-    );
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+    });
 
-    const data = await response.json();
-    console.log('[suggestions] Gemini response:', JSON.stringify(data, null, 2));
-    const raw = data.candidates[0].content.parts[0].text.trim();
-
-    // Strip markdown code fences if Gemini wraps the JSON in them
+    const raw = response.text.trim();
     const cleaned = raw.replace(/```json|```/g, '').trim();
     const suggestions = JSON.parse(cleaned);
 
